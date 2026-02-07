@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { Trash2, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -21,7 +22,7 @@ const Watchlist = () => {
     const fetchWatchlist = async () => {
         try {
             const token = await currentUser.getIdToken();
-            const response = await axios.get('http://localhost:3000/api/asteroids/watchlist', {
+            const response = await axios.get(`${API_BASE_URL}/api/asteroids/watchlist`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setWatchlist(response.data.watchlist || []);
@@ -36,7 +37,7 @@ const Watchlist = () => {
         if (!window.confirm('Remove from watchlist?')) return;
         try {
             const token = await currentUser.getIdToken();
-            await axios.delete(`http://localhost:3000/api/asteroids/watchlist/${asteroidId}`, {
+            await axios.delete(`${API_BASE_URL}/api/asteroids/watchlist/${asteroidId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setWatchlist(prev => prev.filter(item => item.asteroidId !== asteroidId));

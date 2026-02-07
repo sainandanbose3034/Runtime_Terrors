@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ShieldAlert, ShieldCheck, Rocket, Telescope, Plus, Trash2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 import { useTranslation } from 'react-i18next';
 
 const AsteroidCard = ({ asteroid, onRemove, notes }) => {
@@ -19,7 +20,7 @@ const AsteroidCard = ({ asteroid, onRemove, notes }) => {
         setLoading(true);
         try {
             const token = await currentUser.getIdToken();
-            await axios.post('http://localhost:3000/api/asteroids/watchlist', {
+            await axios.post(`${API_BASE_URL}/api/asteroids/watchlist`, {
                 asteroidId: asteroid.id,
                 name: asteroid.name,
                 notes: 'Added from Dashboard'

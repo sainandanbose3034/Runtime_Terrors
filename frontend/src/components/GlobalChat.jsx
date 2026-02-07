@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import io from 'socket.io-client';
+import { io } from 'socket.io-client';
+import API_BASE_URL from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { MessageSquare, X, Send, Minimize2, Maximize2 } from 'lucide-react';
 
 // Initialize socket outside component to prevent multiple connections
-const socket = io('http://localhost:3000');
+const socket = io(API_BASE_URL);
 
 const GlobalChat = () => {
     const { currentUser } = useAuth();

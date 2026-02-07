@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 import AsteroidVis from '../components/AsteroidVis';
 import AsteroidCard from '../components/AsteroidCard';
 import { Search, Radar, List, Box, ArrowUp, ArrowDown, ArrowUpDown, Bell, BellOff } from 'lucide-react';
@@ -106,7 +107,7 @@ const Dashboard = () => {
 
     const fetchAsteroids = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/api/asteroids/feed');
+            const response = await axios.get(`${API_BASE_URL}/api/asteroids/feed`);
             // Flatten the day-wise object into a single array
             if (response.data.near_earth_objects) {
                 const flatList = Object.values(response.data.near_earth_objects).flat();

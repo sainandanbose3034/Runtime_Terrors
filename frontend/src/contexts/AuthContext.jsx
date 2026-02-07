@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { auth, googleProvider } from "../firebase";
 import { signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import axios from 'axios';
+import API_BASE_URL from '../config/api';
 
 const AuthContext = React.createContext();
 
@@ -19,7 +20,7 @@ export function AuthProvider({ children }) {
 
         // Sync user with backend
         const token = await result.user.getIdToken();
-        await axios.post('http://localhost:3000/api/auth/sync', {
+        await axios.post(`${API_BASE_URL}/api/auth/sync`, {
             name: name
         }, {
             headers: { Authorization: `Bearer ${token}` }
@@ -36,7 +37,7 @@ export function AuthProvider({ children }) {
             const result = await signInWithPopup(auth, googleProvider);
             // Sync user with backend
             const token = await result.user.getIdToken();
-            await axios.post('http://localhost:3000/api/auth/sync', {
+            await axios.post(`${API_BASE_URL}/api/auth/sync`, {
                 name: result.user.displayName
             }, {
                 headers: { Authorization: `Bearer ${token}` }
