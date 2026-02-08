@@ -3,9 +3,12 @@ import axios from 'axios';
 import API_BASE_URL from '../config/api';
 import AsteroidVis from '../components/AsteroidVis';
 import AsteroidCard from '../components/AsteroidCard';
-import { Search, Radar, List, Box, ArrowUp, ArrowDown, ArrowUpDown, Bell, BellOff } from 'lucide-react';
+import AnalyticsModal from '../components/AnalyticsModal';
+import { Search, Radar, List, Box, ArrowUp, ArrowDown, ArrowUpDown, Bell, BellOff, Activity } from 'lucide-react';
 
 import { useTranslation } from 'react-i18next';
+
+import { calculateRisk } from '../utils/asteroidUtils';
 
 const Dashboard = () => {
     const { t } = useTranslation();
@@ -14,9 +17,11 @@ const Dashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredAsteroids, setFilteredAsteroids] = useState([]);
     const [viewMode, setViewMode] = useState('list'); // 'list' or '3d'
+    const [focusedAsteroidId, setFocusedAsteroidId] = useState(null);
     const [sortBy, setSortBy] = useState('name'); // 'name', 'risk'
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc', 'desc'
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+    const [showAnalytics, setShowAnalytics] = useState(false);
 
     useEffect(() => {
         if (Notification.permission === 'granted') {
@@ -29,6 +34,11 @@ const Dashboard = () => {
             checkAlerts(asteroids);
         }
     }, [asteroids, notificationsEnabled]);
+
+    const handleShowIn3D = (id) => {
+        setFocusedAsteroidId(id);
+        setViewMode('3d');
+    };
 
     const toggleNotifications = async () => {
         if (notificationsEnabled) {
@@ -56,6 +66,8 @@ const Dashboard = () => {
             }
         }
     };
+
+
 
     const checkAlerts = (data) => {
         // Prevent multiple alerts per session
@@ -123,38 +135,7 @@ const Dashboard = () => {
         }
     };
 
-    // Helper: Calculate Risk Score (0-100)
-    const calculateRisk = (asteroid) => {
-        if (asteroid.risk_score) return asteroid.risk_score;
-        if (asteroid.safety_score) return 100 - asteroid.safety_score;
 
-        let risk = 0;
-        // 1. Size Factor (0-30 points)
-        const diameter = asteroid.estimated_diameter?.kilometers?.estimated_diameter_max || 0;
-        risk += Math.min(diameter * 20, 30);
-
-        // 2. Proximity Factor (0-40 points)
-        const approach = asteroid.close_approach_data?.[0];
-        if (approach) {
-            const missDistance = parseFloat(approach.miss_distance?.kilometers) || 100000000;
-            if (missDistance < 1000000) risk += 40;
-            else if (missDistance < 5000000) risk += 30;
-            else if (missDistance < 10000000) risk += 15;
-            else if (missDistance < 20000000) risk += 5;
-        }
-
-        // 3. Velocity Factor (0-20 points)
-        if (approach) {
-            const kph = parseFloat(approach.relative_velocity?.kilometers_per_hour) || 0;
-            if (kph > 100000) risk += 20;
-            else if (kph > 50000) risk += 10;
-        }
-
-        // 4. Hazardous Flag (Bonus 10 points)
-        if (asteroid.is_potentially_hazardous_asteroid) risk += 10;
-
-        return Math.min(Math.round(risk), 100);
-    };
 
     return (
         <div className="container mx-auto px-4 py-8 pt-24 min-h-screen">
@@ -185,6 +166,14 @@ const Dashboard = () => {
 
                 {/* View Controls & Filter/Sort */}
                 <div className="flex flex-col md:flex-row gap-4 items-center w-full xl:w-auto">
+
+                    <button
+                        onClick={() => setShowAnalytics(true)}
+                        className="bg-cyan-950 hover:bg-cyan-900 border border-cyan-500/30 text-cyan-400 px-4 py-2 rounded-lg flex items-center gap-2 transition-all hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+                    >
+                        <Activity size={18} />
+                        <span className="text-sm font-medium">Analytics</span>
+                    </button>
 
                     {/* View Toggle */}
                     <div className="flex bg-slate-900 rounded-lg p-1 border border-slate-700">
@@ -244,7 +233,13 @@ const Dashboard = () => {
             {/* Content Area */}
             {viewMode === '3d' && !loading ? (
                 <div className="animate-in fade-in zoom-in duration-500">
-                    <AsteroidVis asteroids={filteredAsteroids} />
+                    <div className="animate-in fade-in zoom-in duration-500">
+                        <AsteroidVis
+                            asteroids={filteredAsteroids}
+                            focusedAsteroidId={focusedAsteroidId}
+                            setFocusedAsteroidId={setFocusedAsteroidId}
+                        />
+                    </div>
                 </div>
             ) : (
                 <>
@@ -258,7 +253,11 @@ const Dashboard = () => {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {filteredAsteroids.map(asteroid => (
-                                <AsteroidCard key={asteroid.id} asteroid={asteroid} />
+                                <AsteroidCard
+                                    key={asteroid.id}
+                                    asteroid={asteroid}
+                                    onShow3D={handleShowIn3D}
+                                />
                             ))}
                         </div>
                     )}
@@ -270,6 +269,13 @@ const Dashboard = () => {
                     <p>No asteroids found matching your search.</p>
                 </div>
             )}
+
+            <AnalyticsModal
+                isOpen={showAnalytics}
+                onClose={() => setShowAnalytics(false)}
+                data={filteredAsteroids}
+                allData={asteroids}
+            />
         </div>
     );
 };

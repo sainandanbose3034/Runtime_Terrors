@@ -18,6 +18,7 @@
         "moderate": "MODERATE",
         "loading": "Loading telemetry data...",
         "status_active": "Live Feed Active",
+        "safety_score": "Safety Score",
         "tracked_objects": "Tracked Objects",
         "enable_alerts": "Enable Alerts",
         "disable_alerts": "Disable Alerts",
@@ -57,5 +58,35 @@
     },
     "common": {
         "error": "Error"
+    },
+    "home": {
+        "system_online": "SYSTEM ONLINE",
+        "monitoring_active": "MONITORING ACTIVE",
+        "hero_title_prefix": "Defending Earth from",
+        "hero_title_suffix": "Cosmic Threats",
+        "hero_desc": "Real-time tracking of Near-Earth Objects (NEOs) using NASA's NeoWs API. Analyze trajectories, assess impact risks, and secure our future.",
+        "launch_dashboard": "Launch Dashboard",
+        "live_feed_title": "Live NASA Feed",
+        "live_feed_desc": "Direct integration with the Jet Propulsion Laboratory (JPL) to provide up-to-the-second data on approaching asteroids.",
+        "risk_analysis_title": "Risk Analysis",
+        "risk_analysis_desc": "Advanced algorithms classify objects based on estimated diameter, velocity, and miss distance to identify potential hazards.",
+        "watchlist_title": "Personal Watchlist",
+        "watchlist_desc": "Create an account to track specific objects of interest and receive alerts if their trajectory becomes threatening."
+    },
+    "login": {
+        "access_terminal": "Access Terminal",
+        "identify_yourself": "Identify yourself.",
+        "create_credentials": "Create new credentials.",
+        "full_name": "Full Name",
+        "email": "Email Address",
+        "password": "Password",
+        "sign_in": "Sign In",
+        "create_account": "Create Account",
+        "processing": "Processing...",
+        "or_continue_with": "Or continue with",
+        "google_sign_in": "Sign in with Google",
+        "need_account": "Need an account? Sign Up",
+        "already_have_account": "Already have an account? Sign In",
+        "policy_agreement": "By accessing this system, you agree to the NASA Open Data Policy & Security Protocols."
     }
 }

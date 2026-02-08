@@ -38,5 +38,35 @@
     },
     "common": {
         "error": "Error"
+    },
+    "home": {
+        "system_online": "SISTEMA EN LÍNEA",
+        "monitoring_active": "MONITOREO ACTIVO",
+        "hero_title_prefix": "Defendiendo la Tierra de",
+        "hero_title_suffix": "Amenazas Cósmicas",
+        "hero_desc": "Seguimiento en tiempo real de Objetos Cercanos a la Tierra (NEOs) utilizando la API NeoWs de la NASA. Analice trayectorias, evalúe riesgos de impacto y asegure nuestro futuro.",
+        "launch_dashboard": "Iniciar Tablero",
+        "live_feed_title": "Transmisión en Vivo de la NASA",
+        "live_feed_desc": "Integración directa con el Laboratorio de Propulsión a Chorro (JPL) para proporcionar datos actualizados al segundo sobre asteroides que se aproximan.",
+        "risk_analysis_title": "Análisis de Riesgos",
+        "risk_analysis_desc": "Algoritmos avanzados clasifican objetos basándose en el diámetro estimado, velocidad y distancia de paso para identificar peligros potenciales.",
+        "watchlist_title": "Lista de Vigilancia Personal",
+        "watchlist_desc": "Cree una cuenta para rastrear objetos específicos de interés y reciba alertas si su trayectoria se vuelve amenazante."
+    },
+    "login": {
+        "access_terminal": "Terminal de Acceso",
+        "identify_yourself": "Identifíquese.",
+        "create_credentials": "Crear nuevas credenciales.",
+        "full_name": "Nombre Completo",
+        "email": "Dirección de Correo",
+        "password": "Contraseña",
+        "sign_in": "Iniciar Sesión",
+        "create_account": "Crear Cuenta",
+        "processing": "Procesando...",
+        "or_continue_with": "O continuar con",
+        "google_sign_in": "Iniciar sesión con Google",
+        "need_account": "¿Necesita una cuenta? Regístrese",
+        "already_have_account": "¿Ya tiene una cuenta? Inicie sesión",
+        "policy_agreement": "Al acceder a este sistema, acepta la Política de Datos Abiertos y Protocolos de Seguridad de la NASA."
     }
 }

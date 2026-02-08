@@ -57,5 +57,35 @@
     },
     "common": {
         "error": "Erreur"
+    },
+    "home": {
+        "system_online": "SYSTÈME EN LIGNE",
+        "monitoring_active": "SURVEILLANCE ACTIVE",
+        "hero_title_prefix": "Défendre la Terre des",
+        "hero_title_suffix": "Menaces Cosmiques",
+        "hero_desc": "Suivi en temps réel des objets géocroiseurs (NEO) utilisant l'API NeoWs de la NASA. Analysez les trajectoires, évaluez les risques d'impact et sécurisez notre avenir.",
+        "launch_dashboard": "Lancer le Tableau de Bord",
+        "live_feed_title": "Flux NASA en Direct",
+        "live_feed_desc": "Intégration directe avec le Jet Propulsion Laboratory (JPL) pour fournir des données à la seconde près sur les astéroïdes en approche.",
+        "risk_analysis_title": "Analyse des Risques",
+        "risk_analysis_desc": "Des algorithmes avancés classent les objets en fonction du diamètre estimé, de la vitesse et de la distance de passage pour identifier les dangers potentiels.",
+        "watchlist_title": "Liste de Surveillance Personnelle",
+        "watchlist_desc": "Créez un compte pour suivre des objets spécifiques d'intérêt et recevez des alertes si leur trajectoire devient menaçante."
+    },
+    "login": {
+        "access_terminal": "Terminal d'Accès",
+        "identify_yourself": "Identifiez-vous.",
+        "create_credentials": "Créer de nouveaux identifiants.",
+        "full_name": "Nom Complet",
+        "email": "Adresse Email",
+        "password": "Mot de Passe",
+        "sign_in": "Se Connecter",
+        "create_account": "Créer un Compte",
+        "processing": "Traitement...",
+        "or_continue_with": "Ou continuer avec",
+        "google_sign_in": "Se connecter avec Google",
+        "need_account": "Besoin d'un compte ? Inscrivez-vous",
+        "already_have_account": "Vous avez déjà un compte ? Connectez-vous",
+        "policy_agreement": "En accédant à ce système, vous acceptez la politique de données ouvertes et les protocoles de sécurité de la NASA."
     }
 }

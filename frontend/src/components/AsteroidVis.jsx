@@ -175,11 +175,12 @@ const OrbitPath = ({ a, e, inclination, rotation, color }) => {
     );
 };
 
-const AsteroidVis = ({ asteroids }) => {
-    const [focusedAsteroidId, setFocusedAsteroidId] = useState(null);
+const AsteroidVis = ({ asteroids, focusedAsteroidId, setFocusedAsteroidId }) => {
+    // Internal state removed in favor of props
     const [time, setTime] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [speed, setSpeed] = useState(1);
+    const [isReversed, setIsReversed] = useState(false);
     const controlsRef = useRef();
 
     const orbitalData = useMemo(() => {
@@ -231,7 +232,7 @@ const AsteroidVis = ({ asteroids }) => {
         let animationFrame;
         const animate = () => {
             if (isPlaying) {
-                setTime(prev => prev + (0.01 * speed));
+                setTime(prev => prev + (0.01 * speed * (isReversed ? -1 : 1)));
             }
             animationFrame = requestAnimationFrame(animate);
         };
@@ -311,8 +312,8 @@ const AsteroidVis = ({ asteroids }) => {
                             key={item.id}
                             onClick={() => setFocusedAsteroidId(item.id)}
                             className={`p-2 rounded cursor-pointer transition-all border ${focusedAsteroidId === item.id
-                                    ? 'bg-nasa-blue/30 border-cyan-400'
-                                    : 'bg-white/5 border-transparent hover:bg-white/10'
+                                ? 'bg-nasa-blue/30 border-cyan-400'
+                                : 'bg-white/5 border-transparent hover:bg-white/10'
                                 }`}
                         >
                             <div className="flex justify-between items-center text-xs">
@@ -336,77 +337,72 @@ const AsteroidVis = ({ asteroids }) => {
             </div>
 
             <div className="flex-1 relative">
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-[90%] max-w-2xl bg-slate-950/90 backdrop-blur-md px-6 py-4 rounded-sm border border-cyan-900 shadow-2xl flex flex-col gap-4">
-
-                    <div className="flex items-center justify-between border-b border-cyan-900/50 pb-2">
-                        <div className="flex items-center gap-3">
-                            <div className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
-                            <span className="text-xs font-mono text-cyan-500 tracking-widest uppercase">
-                                {isPlaying ? 'SIMULATION RUNNING' : 'SIMULATION PAUSED'}
+                {/* Time Machine HUD - Top Left */}
+                <div className="absolute top-6 left-6 z-20 bg-slate-950/80 backdrop-blur-md p-4 rounded-xl border border-cyan-900/50 shadow-2xl flex flex-col gap-3 min-w-[200px]">
+                    <div className="flex items-center justify-between border-b border-cyan-900/30 pb-2">
+                        <div className="flex items-center gap-2">
+                            <div className={`w-1.5 h-1.5 rounded-full ${isPlaying ? (isReversed ? 'bg-amber-500 animate-pulse' : 'bg-green-500 animate-pulse') : 'bg-red-500'}`}></div>
+                            <span className="text-[10px] font-mono text-cyan-500 tracking-widest uppercase">
+                                {isPlaying ? (isReversed ? 'REWINDING' : 'RUNNING') : 'PAUSED'}
                             </span>
                         </div>
                         <div className="text-xs font-mono text-cyan-300">
-                            COORD: T+{time.toFixed(4)}
+                            DILATION: {speed}X
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="text-center">
+                        <div className="text-xs text-slate-400 font-mono mb-1">SIMULATION DATE</div>
+                        <div className="text-2xl font-bold text-white tracking-widest font-mono">
+                            {new Date(Date.now() + time * 86400000 * 10).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                        </div>
+                        <div className="text-[10px] text-cyan-500/50 font-mono mt-1">T+{time.toFixed(2)}</div>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-2 mt-1">
+                        <button
+                            onClick={() => setIsReversed(!isReversed)}
+                            className={`
+                                w-8 h-8 flex items-center justify-center border rounded-lg transition-all
+                                ${isReversed
+                                    ? 'border-amber-500 text-amber-500 bg-amber-900/20'
+                                    : 'border-cyan-500/50 text-cyan-500/50 hover:border-cyan-500 hover:text-cyan-500 hover:bg-cyan-900/10'
+                                }
+                            `}
+                            title="Reverse Time"
+                        >
+                            <Rewind size={14} />
+                        </button>
+
                         <button
                             onClick={() => setIsPlaying(!isPlaying)}
                             className={`
-                                w-16 h-16 flex items-center justify-center border-2 rounded-sm transition-all
+                                w-10 h-10 flex items-center justify-center border rounded-lg transition-all
                                 ${isPlaying
                                     ? 'border-red-500 text-red-500 hover:bg-red-900/20'
                                     : 'border-cyan-500 text-cyan-500 hover:bg-cyan-900/20 hover:scale-105'
                                 }
                             `}
                         >
-                            {isPlaying ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
+                            {isPlaying ? <Pause size={18} /> : <Play size={18} className="ml-1" />}
                         </button>
 
-                        <div className="flex-1 flex flex-col gap-2">
-                            <div className="flex justify-between text-[10px] text-slate-500 font-mono uppercase tracking-wider">
-                                <span>Timeline Scrub</span>
-                                <span>Dilation: {speed}x</span>
-                            </div>
-
-                            <div className="relative h-6 w-full flex items-center">
-                                <div className="absolute inset-0 flex items-center justify-between px-1 pointer-events-none opacity-30">
-                                    {[...Array(20)].map((_, i) => (
-                                        <div key={i} className="w-[1px] h-2 bg-cyan-500"></div>
-                                    ))}
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="100"
-                                    step="0.1"
-                                    value={time % 100}
-                                    onChange={(e) => {
-                                        setTime(parseFloat(e.target.value));
-                                        setIsPlaying(false);
-                                    }}
-                                    className="w-full accent-cyan-500 h-1 bg-slate-800 rounded-none appearance-none cursor-pointer z-10 hover:h-2 transition-all"
-                                />
-                            </div>
-
-                            <div className="flex gap-1 justify-end">
-                                {[0.5, 1, 2, 4, 8].map((s) => (
-                                    <button
-                                        key={s}
-                                        onClick={() => setSpeed(s)}
-                                        className={`
-                                            px-2 py-1 text-[10px] font-mono border transition-colors
-                                            ${speed === s
-                                                ? 'bg-cyan-500 text-black border-cyan-500'
-                                                : 'text-cyan-500 border-cyan-900 hover:border-cyan-500'
-                                            }
-                                        `}
-                                    >
-                                        x{s}
-                                    </button>
-                                ))}
-                            </div>
+                        <div className="flex gap-1">
+                            {[1, 8, 16, 32].map((s) => (
+                                <button
+                                    key={s}
+                                    onClick={() => setSpeed(s)}
+                                    className={`
+                                        w-8 h-8 flex items-center justify-center text-[10px] font-mono border rounded transition-colors
+                                        ${speed === s
+                                            ? 'bg-cyan-500 text-black border-cyan-500'
+                                            : 'text-cyan-500 border-cyan-900 hover:border-cyan-500'
+                                        }
+                                    `}
+                                >
+                                    {s}x
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>

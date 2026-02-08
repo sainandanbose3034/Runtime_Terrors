@@ -5,13 +5,12 @@ import axios from 'axios';
 import API_BASE_URL from '../config/api';
 import { useTranslation } from 'react-i18next';
 
-const AsteroidCard = ({ asteroid, onRemove, notes }) => {
+const AsteroidCard = ({ asteroid, onRemove, notes, onShow3D }) => {
     const { currentUser } = useAuth();
     const [loading, setLoading] = useState(false);
     const [added, setAdded] = useState(false);
     const { t } = useTranslation();
 
-    // Risk Logic
     // Risk Logic
     const riskScore = asteroid.risk_score || 0;
     const isHighRisk = riskScore >= 50 || asteroid.is_potentially_hazardous_asteroid;
@@ -79,20 +78,23 @@ const AsteroidCard = ({ asteroid, onRemove, notes }) => {
                 </div>
 
                 {/* Safety Score */}
-                <div className="col-span-2 bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-colors flex-col">
-                    <div className="mt-4">
-                        <div className="flex justify-between text-xs text-slate-400 mb-1">
-                            <span>{t('dashboard.risk_level')}</span>
-                            <span className={isHighRisk ? "text-risk-high" : "text-risk-low"}>
-                                {riskScore}/100
-                            </span>
-                        </div>
-                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div
-                                className={`h-full transition-all duration-1000 ${isHighRisk ? 'bg-risk-high' : 'bg-risk-low'}`}
-                                style={{ width: `${riskScore}%` }}
-                            ></div>
-                        </div>
+                <div className="col-span-2 bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-colors flex flex-col justify-center">
+                    <div className="flex justify-between text-xs text-slate-400 mb-1">
+                        <span>{t('dashboard.safety_score')}</span>
+                        <span
+                            className="font-bold bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 bg-clip-text text-transparent"
+                        >
+                            {100 - riskScore}/100
+                        </span>
+                    </div>
+                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden relative">
+                        <div
+                            className="h-full rounded-full transition-all duration-1000 absolute top-0 left-0 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"
+                            style={{
+                                width: '100%',
+                                clipPath: `inset(0 ${riskScore}% 0 0)` // Reveals gradient based on Safety Score (100 - risk)
+                            }}
+                        ></div>
                     </div>
                 </div>
             </div>
@@ -107,6 +109,13 @@ const AsteroidCard = ({ asteroid, onRemove, notes }) => {
                 </div>
 
                 <div className="flex gap-2">
+                    <button
+                        onClick={() => onShow3D(asteroid.id)}
+                        className="p-2 rounded-lg transition-colors flex items-center gap-2 text-xs font-bold bg-white/5 hover:bg-white/10 text-cyan-300 border border-cyan-500/20 hover:border-cyan-500/40"
+                        title={t('dashboard.view_3d')}
+                    >
+                        <Rocket size={14} className="rotate-45" /> <span className="hidden sm:inline">3D</span>
+                    </button>
                     {onRemove ? (
                         <button
                             onClick={() => onRemove(asteroid.id)}

@@ -64,9 +64,10 @@ export function AuthProvider({ children }) {
 
     const value = {
         currentUser,
-        loginWithGoogle,
-        loginWithEmail,
+        loading,
         signupWithEmail,
+        loginWithEmail,
+        loginWithGoogle,
         logout
     };
 

@@ -85,6 +85,21 @@ const Earth = ({ mouse }) => {
         'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png'
     ]);
 
+    useEffect(() => {
+        return () => {
+            // Explicitly dispose of resources if needed, though R3F usually handles this.
+            // This is a safeguard against memory leaks in complex scenes.
+            if (earthRef.current) {
+                earthRef.current.geometry?.dispose();
+                earthRef.current.material?.dispose();
+            }
+            if (cloudsRef.current) {
+                cloudsRef.current.geometry?.dispose();
+                cloudsRef.current.material?.dispose();
+            }
+        };
+    }, []);
+
     useFrame(({ clock }) => {
         const elapsedTime = clock.getElapsedTime();
 

@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Globe, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Login = () => {
     const { loginWithGoogle, loginWithEmail, signupWithEmail, currentUser } = useAuth();
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isSignup, setIsSignup] = useState(false);
@@ -66,8 +68,8 @@ const Login = () => {
                     <div className="bg-nasa-blue inline-block p-4 rounded-full shadow-[0_0_20px_rgba(11,61,145,0.5)] mb-4">
                         <Globe size={40} className="text-white" />
                     </div>
-                    <h2 className="text-3xl font-bold text-white">Access Terminal</h2>
-                    <p className="text-slate-400 mt-2">{isSignup ? 'Create new credentials.' : 'Identify yourself.'}</p>
+                    <h2 className="text-3xl font-bold text-white">{t('login.access_terminal')}</h2>
+                    <p className="text-slate-400 mt-2">{isSignup ? t('login.create_credentials') : t('login.identify_yourself')}</p>
                 </div>
 
                 {error && (
@@ -79,7 +81,7 @@ const Login = () => {
                 <form onSubmit={handleEmailAuth} className="space-y-4 mb-6">
                     {isSignup && (
                         <div>
-                            <label className="block text-sm text-slate-400 mb-1">Full Name</label>
+                            <label className="block text-sm text-slate-400 mb-1">{t('login.full_name')}</label>
                             <input
                                 type="text"
                                 required
@@ -90,7 +92,7 @@ const Login = () => {
                         </div>
                     )}
                     <div>
-                        <label className="block text-sm text-slate-400 mb-1">Email Address</label>
+                        <label className="block text-sm text-slate-400 mb-1">{t('login.email')}</label>
                         <input
                             type="email"
                             required
@@ -100,7 +102,7 @@ const Login = () => {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm text-slate-400 mb-1">Password</label>
+                        <label className="block text-sm text-slate-400 mb-1">{t('login.password')}</label>
                         <input
                             type="password"
                             required
@@ -114,7 +116,7 @@ const Login = () => {
                         disabled={loading}
                         className="w-full bg-nasa-blue hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(11,61,145,0.4)]"
                     >
-                        {loading ? 'Processing...' : (isSignup ? 'Create Account' : 'Sign In')}
+                        {loading ? t('login.processing') : (isSignup ? t('login.create_account') : t('login.sign_in'))}
                     </button>
                 </form>
 
@@ -123,7 +125,7 @@ const Login = () => {
                         <div className="w-full border-t border-slate-700"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-space-card text-slate-500">Or continue with</span>
+                        <span className="px-2 bg-space-card text-slate-500">{t('login.or_continue_with')}</span>
                     </div>
                 </div>
 
@@ -133,7 +135,7 @@ const Login = () => {
                     className="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-3 shadow-lg hover:scale-[1.02]"
                 >
                     <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
-                    Sign in with Google
+                    {t('login.google_sign_in')}
                 </button>
 
                 <div className="text-center mt-6">
@@ -141,12 +143,12 @@ const Login = () => {
                         onClick={() => setIsSignup(!isSignup)}
                         className="text-nasa-blue text-sm hover:underline"
                     >
-                        {isSignup ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
+                        {isSignup ? t('login.already_have_account') : t('login.need_account')}
                     </button>
                 </div>
 
                 <p className="text-center text-slate-500 text-xs mt-6">
-                    By accessing this system, you agree to the <br /> NASA Open Data Policy & Security Protocols.
+                    {t('login.policy_agreement')}
                 </p>
             </div>
         </div>

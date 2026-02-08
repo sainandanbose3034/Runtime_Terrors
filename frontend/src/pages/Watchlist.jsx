@@ -1,31 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link, useLocation } from 'react-router-dom';
 import API_BASE_URL from '../config/api';
 import { useAuth } from '../contexts/AuthContext';
-import { Trash2, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { calculateRisk } from '../utils/asteroidUtils';
 import AsteroidCard from '../components/AsteroidCard';
+import ConfirmationModal from '../components/ConfirmationModal';
 import { useTranslation } from 'react-i18next';
+
+
 
 const Watchlist = () => {
     const { currentUser } = useAuth();
     const [watchlist, setWatchlist] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [deleteId, setDeleteId] = useState(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const { t } = useTranslation();
+
+    const location = useLocation();
 
     useEffect(() => {
         if (currentUser) {
             fetchWatchlist();
         }
-    }, [currentUser]);
+    }, [currentUser, location]);
 
     const fetchWatchlist = async () => {
+        setLoading(true);
         try {
             const token = await currentUser.getIdToken();
             const response = await axios.get(`${API_BASE_URL}/api/asteroids/watchlist`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Cache-Control': 'no-cache'
+                }
             });
-            setWatchlist(response.data.watchlist || []);
+
+            const list = response.data.watchlist || [];
+            // Inject risk_score using the shared utility
+            const listWithRisk = list.map(item => ({
+                ...item,
+                risk_score: calculateRisk(item)
+            }));
+            setWatchlist(listWithRisk);
         } catch (error) {
             console.error("Error fetching watchlist:", error);
         } finally {
@@ -33,20 +51,31 @@ const Watchlist = () => {
         }
     };
 
-    const removeFromWatchlist = async (asteroidId) => {
-        if (!window.confirm('Remove from watchlist?')) return;
+
+
+    const confirmRemove = (id) => {
+        setDeleteId(id);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleRemoveFromWatchlist = async () => {
+        if (!deleteId) return;
+
         try {
             const token = await currentUser.getIdToken();
-            await axios.delete(`${API_BASE_URL}/api/asteroids/watchlist/${asteroidId}`, {
+            await axios.delete(`${API_BASE_URL}/api/asteroids/watchlist/${deleteId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setWatchlist(prev => prev.filter(item => item.asteroidId !== asteroidId));
+
+            // Remove from state immediately
+            setWatchlist(prev => prev.filter(item => item.id !== deleteId && item.asteroidId !== deleteId));
+            setDeleteId(null);
         } catch (error) {
             console.error("Failed to remove", error);
         }
     };
 
-    if (loading) return <div className="text-center text-white pt-20">{t('dashboard.loading')}</div>;
+    if (loading && watchlist.length === 0) return <div className="text-center text-white pt-20">{t('dashboard.loading')}</div>;
 
     return (
         <div className="container mx-auto px-4 py-8 pt-24 min-h-screen">
@@ -68,12 +97,26 @@ const Watchlist = () => {
                         <AsteroidCard
                             key={item.id}
                             asteroid={item}
-                            onRemove={removeFromWatchlist}
+                            // Important: Pass the ID that the delete API expects. 
+                            // Usually this is `item.asteroidId` or `item.id` depending on backend.
+                            // We'll pass `item.asteroidId` if it exists, otherwise `item.id`.
+                            onRemove={() => confirmRemove(item.asteroidId || item.id)}
                             notes={item.saved_notes}
                         />
                     ))}
                 </div>
             )}
+
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleRemoveFromWatchlist}
+                title={t('watchlist.removeConfirmTitle') || "Remove from Watchlist"}
+                message={t('watchlist.removeConfirmMessage') || "Are you sure you want to stop tracking this object? You will stop receiving alerts for it."}
+                confirmText={t('common.remove') || "Remove"}
+                cancelText={t('common.cancel') || "Cancel"}
+                isDanger={true}
+            />
         </div>
     );
 };

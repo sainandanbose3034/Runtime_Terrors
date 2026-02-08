@@ -15,28 +15,35 @@ const Navbar = () => {
 
     return (
         <nav className="fixed w-full z-50 bg-space-dark/80 backdrop-blur-md border-b border-white/10">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-[95%] mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    <Link to="/" className="flex items-center gap-2 group">
-                        <div className="relative w-8 h-8 flex items-center justify-center">
-                            {/* Orbital Ring - Outer */}
-                            <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full animate-[spin_10s_linear_infinite]">
-                                <circle cx="50" cy="50" r="45" fill="none" stroke="#22d3ee" strokeWidth="2" strokeDasharray="60 140" className="opacity-50" />
-                            </svg>
+                    <Link to="/" className="flex items-center gap-3 group">
+                        {/* Radar Logo */}
+                        <div className="relative w-10 h-10 flex items-center justify-center bg-cyan-950/30 rounded-full border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)] overflow-hidden group-hover:border-cyan-400/50 transition-colors duration-300">
+                            {/* Radar Sweep */}
+                            <div className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0deg,rgba(34,211,238,0.2)_360deg)] animate-[spin_3s_linear_infinite]"></div>
 
-                            {/* Core - Inner glowing planet */}
-                            <div className="relative flex items-center justify-center z-10 w-full h-full">
-                                <div className="w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.8)] animate-pulse"></div>
-                            </div>
+                            {/* Grid Lines */}
+                            <div className="absolute inset-0 border border-cyan-500/20 rounded-full scale-75"></div>
+                            <div className="absolute inset-0 border border-cyan-500/20 rounded-full scale-50"></div>
+                            <div className="absolute w-full h-[1px] bg-cyan-500/20 top-1/2 -translate-y-1/2"></div>
+                            <div className="absolute h-full w-[1px] bg-cyan-500/20 left-1/2 -translate-x-1/2"></div>
 
-                            {/* Shimmer Effect */}
-                            <div className="absolute inset-0 w-full h-full overflow-hidden rounded-full pointer-events-none">
-                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent w-[200%] h-full animate-shimmer"></div>
-                            </div>
+                            {/* Center Dot */}
+                            <div className="absolute w-1.5 h-1.5 bg-cyan-400 rounded-full shadow-[0_0_5px_cyan] z-10"></div>
+
+                            {/* Hazardous Blip */}
+                            <div className="absolute top-2 right-3 w-1 h-1 bg-red-500 rounded-full animate-ping opacity-75"></div>
                         </div>
-                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 tracking-wider group-hover:from-cyan-300 group-hover:to-blue-400 transition-all duration-300">
-                            COSMIC WATCH
-                        </span>
+
+                        <div className="flex flex-col">
+                            <span className="text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 drop-shadow-[0_0_8px_rgba(34,211,238,0.3)] group-hover:drop-shadow-[0_0_12px_rgba(34,211,238,0.5)] transition-all">
+                                COSMIC WATCH
+                            </span>
+                            <span className="text-[10px] text-cyan-500/70 tracking-[0.2em] font-mono leading-none">
+                                PLANETARY DEFENSE
+                            </span>
+                        </div>
                     </Link>
 
                     {/* Desktop Menu */}
@@ -71,9 +78,6 @@ const Navbar = () => {
                                 <LanguageSwitcher />
                                 <Link to="/login" className="text-slate-300 hover:text-white transition-colors">
                                     {t('navbar.login')}
-                                </Link>
-                                <Link to="/signup" className="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-md transition-all shadow-lg hover:shadow-cyan-500/20">
-                                    Get Started
                                 </Link>
                             </>
                         )}

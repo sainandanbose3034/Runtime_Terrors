@@ -17,24 +17,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: [
-            'http://localhost:5173',
-            'https://runtime-terror-ujv4.vercel.app',
-            /\.vercel\.app$/
-        ],
-        methods: ["GET", "POST"],
-        credentials: true
+        origin: "*",
+        methods: ["GET", "POST"]
     }
 });
 
-app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://runtime-terror-ujv4.vercel.app',
-        /\.vercel\.app$/
-    ],
-    credentials: true
-}));
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

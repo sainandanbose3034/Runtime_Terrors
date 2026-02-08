@@ -17,8 +17,7 @@ const GlobalChat = () => {
     const [messages, setMessages] = useState([]);
     const messagesEndRef = useRef(null);
 
-    // Hide chat on Dashboard to prevent 3D view obstruction
-    if (location.pathname === '/dashboard') return null;
+
 
     // Generate a random explorer ID if not logged in
     const [explorerId] = useState(() => Math.floor(1000 + Math.random() * 9000));
@@ -61,6 +60,9 @@ const GlobalChat = () => {
         socket.emit('send_message', messageData);
         setMessage('');
     };
+
+    // Only show chat on Dashboard page
+    if (location.pathname !== '/dashboard') return null;
 
     if (!isOpen) {
         return (
