@@ -65,6 +65,11 @@ io.on('connection', (socket) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/asteroids', asteroidRoutes);
 
+// Test Route
+app.get('/ping', (req, res) => {
+    res.send('pong 🏓');
+});
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
