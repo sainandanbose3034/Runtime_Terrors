@@ -94,9 +94,8 @@ const Dashboard = () => {
                 valB = b.name.replace(/[()]/g, '').trim();
                 return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
             } else if (sortBy === 'risk') {
-                // Use risk_score if available, otherwise invert safety_score
-                valA = a.risk_score !== undefined ? a.risk_score : (100 - (a.safety_score || 0));
-                valB = b.risk_score !== undefined ? b.risk_score : (100 - (b.safety_score || 0));
+                valA = a.risk_score || 0;
+                valB = b.risk_score || 0;
                 return sortOrder === 'asc' ? valA - valB : valB - valA;
             }
             return 0;
@@ -110,7 +109,10 @@ const Dashboard = () => {
             const response = await axios.get(`${API_BASE_URL}/api/asteroids/feed`);
             // Flatten the day-wise object into a single array
             if (response.data.near_earth_objects) {
-                const flatList = Object.values(response.data.near_earth_objects).flat();
+                const flatList = Object.values(response.data.near_earth_objects).flat().map(ast => ({
+                    ...ast,
+                    risk_score: calculateRisk(ast)
+                }));
                 setAsteroids(flatList);
                 // filteredAsteroids will be updated by the useEffect
             }
@@ -119,6 +121,39 @@ const Dashboard = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    // Helper: Calculate Risk Score (0-100)
+    const calculateRisk = (asteroid) => {
+        if (asteroid.risk_score) return asteroid.risk_score;
+        if (asteroid.safety_score) return 100 - asteroid.safety_score;
+
+        let risk = 0;
+        // 1. Size Factor (0-30 points)
+        const diameter = asteroid.estimated_diameter?.kilometers?.estimated_diameter_max || 0;
+        risk += Math.min(diameter * 20, 30);
+
+        // 2. Proximity Factor (0-40 points)
+        const approach = asteroid.close_approach_data?.[0];
+        if (approach) {
+            const missDistance = parseFloat(approach.miss_distance?.kilometers) || 100000000;
+            if (missDistance < 1000000) risk += 40;
+            else if (missDistance < 5000000) risk += 30;
+            else if (missDistance < 10000000) risk += 15;
+            else if (missDistance < 20000000) risk += 5;
+        }
+
+        // 3. Velocity Factor (0-20 points)
+        if (approach) {
+            const kph = parseFloat(approach.relative_velocity?.kilometers_per_hour) || 0;
+            if (kph > 100000) risk += 20;
+            else if (kph > 50000) risk += 10;
+        }
+
+        // 4. Hazardous Flag (Bonus 10 points)
+        if (asteroid.is_potentially_hazardous_asteroid) risk += 10;
+
+        return Math.min(Math.round(risk), 100);
     };
 
     return (

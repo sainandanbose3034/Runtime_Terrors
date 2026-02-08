@@ -12,8 +12,9 @@ const AsteroidCard = ({ asteroid, onRemove, notes }) => {
     const { t } = useTranslation();
 
     // Risk Logic
-    const risk = asteroid.risk_analysis || {};
-    const isHighRisk = risk.level === 'HIGH' || risk.level === 'EXTREME' || asteroid.is_potentially_hazardous_asteroid;
+    // Risk Logic
+    const riskScore = asteroid.risk_score || 0;
+    const isHighRisk = riskScore >= 50 || asteroid.is_potentially_hazardous_asteroid;
 
     const handleAddToWatchlist = async () => {
         if (!currentUser) return;
@@ -78,21 +79,20 @@ const AsteroidCard = ({ asteroid, onRemove, notes }) => {
                 </div>
 
                 {/* Safety Score */}
-                <div className="col-span-2 bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-colors flex justify-between items-center">
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <ShieldCheck size={14} className={`text-${asteroid.safety_score > 80 ? 'green' : asteroid.safety_score > 50 ? 'yellow' : 'red'}-400`} />
-                        <span>{t('dashboard.risk_level')}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-24 h-2 bg-slate-700 rounded-full overflow-hidden relative">
+                <div className="col-span-2 bg-white/5 backdrop-blur-sm p-3 rounded-lg border border-white/10 hover:bg-white/10 transition-colors flex-col">
+                    <div className="mt-4">
+                        <div className="flex justify-between text-xs text-slate-400 mb-1">
+                            <span>{t('dashboard.risk_level')}</span>
+                            <span className={isHighRisk ? "text-risk-high" : "text-risk-low"}>
+                                {riskScore}/100
+                            </span>
+                        </div>
+                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                             <div
-                                className="h-full rounded-full transition-all duration-500 absolute top-0 left-0 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"
-                                style={{ width: '100%', clipPath: `inset(0 ${100 - (asteroid.safety_score || 0)}% 0 0)` }}
+                                className={`h-full transition-all duration-1000 ${isHighRisk ? 'bg-risk-high' : 'bg-risk-low'}`}
+                                style={{ width: `${riskScore}%` }}
                             ></div>
                         </div>
-                        <span className={`font-mono text-lg font-bold bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 bg-clip-text text-transparent`}>
-                            {asteroid.safety_score !== undefined ? asteroid.safety_score : 'N/A'}
-                        </span>
                     </div>
                 </div>
             </div>
